@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Ventas de Crepas</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/parse/dist/parse.min.js"></script>
+</head>
+<body>
+    <!-- Modal para edición -->
+    <div id="modalEditar" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Editar Venta</h2>
+            <form id="editarForm">
+                <input type="hidden" id="editarId">
+                <div class="form-group">
+                    <label for="editarNombre">Nombre del Cliente:</label>
+                    <input type="text" id="editarNombre" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editarBolsas">Cantidad de Bolsas:</label>
+                    <input type="number" id="editarBolsas" min="1" value="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editarFecha">Fecha de Compra:</label>
+                    <input type="date" id="editarFecha" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editarMontoPagado">Monto Pagado ($):</label>
+                    <input type="number" id="editarMontoPagado" min="0" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="editarComentarios">Comentarios:</label>
+                    <textarea id="editarComentarios" rows="2"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" class="btn btn-secondary cancelar-edicion">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <img src="img/crepas-logo.png" alt="Logo Crepas Deliciosas" class="logo">
+            <h1>Control de Ventas de Crepas</h1>
+            <p>Precio por bolsa: $90.00 MXN</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Registrar Nueva Venta</h2>
+                <form id="ventaForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Cliente:</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bolsas">Cantidad de Bolsas:</label>
+                        <input type="number" id="bolsas" min="1" value="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha">Fecha de Compra:</label>
+                        <input type="date" id="fecha" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="montoPagado">Monto Pagado ($):</label>
+                        <input type="number" id="montoPagado" min="0" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comentarios">Comentarios:</label>
+                        <textarea id="comentarios" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Guardar Venta</button>
+                        <button type="reset" class="btn btn-secondary">Limpiar</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="resumen-section">
+                <h2>Resumen de la Venta</h2>
+                <div id="resumenVenta" class="resumen-box">
+                    <p>Complete el formulario para ver el resumen</p>
+                </div>
+            </section>
+
+            <section class="ventas-section">
+                <div class="section-header">
+                    <h2>Historial de Ventas</h2>
+                    <button id="btnImprimir" class="btn btn-primary">Generar PDF</button>
+                </div>
+                
+                <div class="filtros">
+                    <div class="form-group">
+                        <label for="filtroFecha">Filtrar por fecha:</label>
+                        <input type="date" id="filtroFecha">
+                        <button id="btnFiltrar" class="btn btn-secondary">Filtrar</button>
+                        <button id="btnLimpiarFiltro" class="btn btn-tertiary">Mostrar todo</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table id="tablaVentas">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Bolsas</th>
+                                <th>Total</th>
+                                <th>Pagado</th>
+                                <th>Restante</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ventasBody">
+                            <!-- Las ventas se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Sistema de Control de Ventas de Crepas &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/pdfGenerator.js"></script>
+</body>
+</html>
