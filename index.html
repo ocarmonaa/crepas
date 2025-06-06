@@ -52,33 +52,41 @@
 
     <div class="container">
         <header>
-            <img src="img/crepas-logo.png" alt="Logo Crepas Deliciosas" class="logo">
-            <h1>Control de Ventas de Crepas</h1>
-            <p>Precio por bolsa: $90.00 MXN</p>
+            <div class="header-content">
+                <img src="img/crepas-logo.png" alt="Logo Crepas Deliciosas" class="logo">
+                <div class="header-text">
+                    <h1>Control de Ventas de Crepas</h1>
+                    <p class="price-tag">Precio por bolsa: $90.00 MXN</p>
+                </div>
+            </div>
         </header>
 
         <main>
-            <section class="form-section">
-                <h2>Registrar Nueva Venta</h2>
+            <section class="form-section card">
+                <h2><i class="icon">📝</i> Registrar Nueva Venta</h2>
                 <form id="ventaForm">
-                    <div class="form-group">
-                        <label for="nombre">Nombre del Cliente:</label>
-                        <input type="text" id="nombre" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombre">Nombre del Cliente:</label>
+                            <input type="text" id="nombre" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="bolsas">Cantidad de Bolsas:</label>
+                            <input type="number" id="bolsas" min="1" value="1" required>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="bolsas">Cantidad de Bolsas:</label>
-                        <input type="number" id="bolsas" min="1" value="1" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="fecha">Fecha de Compra:</label>
-                        <input type="date" id="fecha" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="montoPagado">Monto Pagado ($):</label>
-                        <input type="number" id="montoPagado" min="0" step="0.01" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha">Fecha de Compra:</label>
+                            <input type="date" id="fecha" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="montoPagado">Monto Pagado ($):</label>
+                            <input type="number" id="montoPagado" min="0" step="0.01" required>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -93,16 +101,16 @@
                 </form>
             </section>
 
-            <section class="resumen-section">
-                <h2>Resumen de la Venta</h2>
+            <section class="resumen-section card">
+                <h2><i class="icon">💰</i> Resumen de la Venta</h2>
                 <div id="resumenVenta" class="resumen-box">
                     <p>Complete el formulario para ver el resumen</p>
                 </div>
             </section>
 
-            <section class="ventas-section">
+            <section class="ventas-section card">
                 <div class="section-header">
-                    <h2>Historial de Ventas</h2>
+                    <h2><i class="icon">📊</i> Historial de Ventas</h2>
                     <button id="btnImprimir" class="btn btn-primary">Generar PDF</button>
                 </div>
                 
@@ -111,7 +119,7 @@
                         <label for="filtroFecha">Filtrar por fecha:</label>
                         <input type="date" id="filtroFecha">
                     </div>
-                    <div class="form-group">
+                    <div class="form-actions">
                         <button id="btnFiltrar" class="btn btn-secondary">Filtrar</button>
                         <button id="btnLimpiarFiltro" class="btn btn-tertiary">Mostrar todo</button>
                     </div>
