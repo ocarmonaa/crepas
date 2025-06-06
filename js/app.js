@@ -41,9 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function inicializarFecha() {
     const fechaInput = document.getElementById('fecha');
+    const filtroFechaInput = document.getElementById('filtroFecha');
     const hoy = new Date();
     const fechaLocal = new Date(hoy.getTime() - hoy.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    
     fechaInput.value = fechaLocal;
+    filtroFechaInput.value = fechaLocal;
 }
 
 /**
@@ -329,14 +332,23 @@ function mostrarAlerta(mensaje, tipo) {
     const alertasExistentes = document.querySelectorAll('.alerta');
     alertasExistentes.forEach(alerta => alerta.remove());
     
+    const iconos = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️'
+    };
+    
     const alerta = document.createElement('div');
     alerta.className = `alerta ${tipo}`;
-    alerta.textContent = mensaje;
+    alerta.innerHTML = `<span>${iconos[tipo] || ''}</span> ${mensaje}`;
     
     document.body.appendChild(alerta);
     
     setTimeout(() => {
-        alerta.remove();
+        alerta.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => {
+            alerta.remove();
+        }, 300);
     }, 3000);
 }
 
@@ -364,33 +376,27 @@ async function generarPDF() {
             creator: 'Sistema de Control de Crepas'
         });
 
-        const margin = 10;
+        const margin = 15;
         const pageWidth = doc.internal.pageSize.getWidth();
         const centerX = pageWidth / 2;
         let currentY = margin;
 
-        // Logo (usando URL)
-        try {
-            const logoData = await getBase64Image('img/crepas-logo.png');
-            doc.addImage(logoData, 'PNG', centerX - 15, currentY, 30, 30);
-            currentY += 32;
-        } catch (error) {
-            console.log("Usando alternativa textual para el logo");
-            doc.setFontSize(16);
-            doc.setTextColor(100, 100, 100);
-            doc.text('Crepas Deliciosas', centerX, currentY + 15, { align: 'center' });
-            currentY += 20;
-        }
-
         // Título y fecha
         doc.setFontSize(20);
-        doc.setTextColor(75, 75, 75);
+        doc.setTextColor(45, 45, 45);
+        doc.setFont('helvetica', 'bold');
         doc.text('Reporte de Ventas de Crepas', centerX, currentY, { align: 'center' });
         currentY += 10;
 
-        doc.setFontSize(10);
-        doc.text(`Generado el: ${new Date().toLocaleDateString('es-MX')}`, centerX, currentY, { align: 'center' });
-        currentY += 10;
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Generado el: ${new Date().toLocaleDateString('es-MX', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        })}`, centerX, currentY, { align: 'center' });
+        currentY += 15;
 
         // Tabla de ventas
         const headers = [['Nombre', 'Bolsas', 'Total', 'Pagado', 'Restante', 'Fecha']];
@@ -412,13 +418,18 @@ async function generarPDF() {
             startY: currentY,
             theme: 'grid',
             headStyles: {
-                fillColor: [152, 251, 152],
-                textColor: [75, 75, 75],
-                fontStyle: 'bold'
+                fillColor: [78, 205, 196],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 10
             },
             styles: {
                 fontSize: 9,
-                cellPadding: 2
+                cellPadding: 3,
+                textColor: [45, 45, 45]
+            },
+            alternateRowStyles: {
+                fillColor: [245, 247, 250]
             }
         });
 
@@ -427,12 +438,18 @@ async function generarPDF() {
         const totalPagado = ventas.reduce((sum, venta) => sum + venta.montoPagado, 0);
         const totalRestante = ventas.reduce((sum, venta) => sum + venta.restante, 0);
         
-        const finalY = doc.lastAutoTable.finalY + 10;
+        const finalY = doc.lastAutoTable.finalY + 15;
         
         doc.setFontSize(12);
+        doc.setFont('helvetica', 'bold');
         doc.text(`Total ventas: $${totalVentas.toFixed(2)}`, margin, finalY);
         doc.text(`Total pagado: $${totalPagado.toFixed(2)}`, margin, finalY + 8);
         doc.text(`Total pendiente: $${totalRestante.toFixed(2)}`, margin, finalY + 16);
+
+        // Pie de página
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text('Sistema de Control de Ventas de Crepas CARFLOR COMPUTO', centerX, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
 
         // Guardar PDF
         doc.save(`reporte_ventas_${new Date().toISOString().split('T')[0]}.pdf`);
@@ -441,29 +458,6 @@ async function generarPDF() {
         console.error("Error al generar PDF:", error);
         mostrarAlerta("Error al generar el PDF", "error");
     }
-}
-
-function getBase64Image(url) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = 'Anonymous';
-        img.src = url;
-        
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            
-            const dataURL = canvas.toDataURL('image/png');
-            resolve(dataURL);
-        };
-        
-        img.onerror = function() {
-            reject(new Error('Error al cargar la imagen'));
-        };
-    });
 }
 
 // Exportar funciones al scope global
